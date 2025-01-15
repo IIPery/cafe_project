@@ -11,6 +11,9 @@ class Table(models.Model):
         verbose_name_plural = 'столы'
         ordering = ('id',)
 
+    def __str__(self) -> str:
+        return f'стол № {self.number}'
+
 
 class Item(models.Model):
     name = models.CharField('наименование', max_length=255, db_index=True)
