@@ -9,6 +9,12 @@ class Table(admin.ModelAdmin):
     search_fields = ('number',)
 
 
+@admin.register(models.Item)
+class Item(admin.ModelAdmin):
+    list_display = ('name', 'price')
+    search_fields = ('name',)
+
+
 # @admin.register(models.Order)
 # class Order(admin.ModelAdmin):
 #     list_display = ('id', 'table_number', 'total_price')

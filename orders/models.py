@@ -1,13 +1,28 @@
 from django.db import models
 
+from orders import consts
+
 
 class Table(models.Model):
-    number = models.CharField('номер стола', max_length=100, db_index=True )
+    number = models.CharField('номер стола', max_length=255, db_index=True )
 
     class Meta:
         verbose_name = 'стол'
         verbose_name_plural = 'столы'
         ordering = ('id',)
+
+
+class Item(models.Model):
+    name = models.CharField('наименование', max_length=255, db_index=True)
+    price = models.IntegerField('цена', default=0)
+
+    class Meta:
+        verbose_name = 'позиция'
+        verbose_name_plural = 'позиции'
+        ordering = ('id',)
+
+    def __str__(self) -> str:
+        return self.name
 
 
 
