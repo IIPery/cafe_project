@@ -1,6 +1,16 @@
 from django.db import models
 
 
+class Table(models.Model):
+    number = models.CharField('номер стола', max_length=100, db_index=True )
+
+    class Meta:
+        verbose_name = 'стол'
+        verbose_name_plural = 'столы'
+        ordering = ('id',)
+
+
+
 # class Order(models.Model):
 #     STATUS_CHOICES = [
 #         ('pending', 'в ожидании'),
