@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Позиции</title>
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+    <hr>
+
+
+    <div class="container">
+        <h2>Добавить новую позицию</h2>
+        <form method="post" action="{% url 'core:items' %}">
+            {% csrf_token %}
+            <label for="name">Название:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="price">Цена:</label>
+            <input type="text" id="price" name="price" required>
+            <button type="submit" name="add_item">Добавить</button>
+        </form>
+
+        <hr>
+
+        <h2>Список позиций</h2>
+        <div class="items-container">
+            {% for item in items %}
+                <div class="item-box">
+                    <form method="post" action="{% url 'core:items' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="item_id" value="{{ item.id }}">
+                        <input type="text" name="name" placeholder="Новое название" value="{{ item.name }}">
+                        <h>цена:</h>
+                        <input type="text" name="price" placeholder="Новая цена" value="{{ item.price }}">
+                        <button type="submit" name="edit_item">Сохранить</button>
+                        <button type="submit" name="delete_item">Удалить</button>
+                    </form>
+                </div>
+            {% empty %}
+                <p>Позиции отсутствуют.</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

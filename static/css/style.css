@@ -1,0 +1,30 @@
+.tables-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-around;
+}
+
+.table-box {
+    width: 200px;
+    padding: 15px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.table-box h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.table-box p {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.table-box strong {
+    color: #4CAF50;
+}

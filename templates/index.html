@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+    <title>Кафе</title>
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+    <hr>
+
+    <div class="container">
+        <h1>Кафе - система управления заказами</h1>
+
+        <div class="tables-container">
+            {% for table in tables %}
+                <div class="table-box">
+                    <h3>Стол № {{ table.number }}</h3>
+
+                    {% if table.orders %}
+                        <ul>
+                            {% for order in table.orders %}
+                                <li>
+                                    <a href="{% url 'core:order_detail' pk=order.id %}">
+                                        Заказ № {{ order.id }} - {{ order.status }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <a href="{% url 'core:order_create' %}?table_id={{ table.id }}">
+                            <button>Добавить заказ</button>
+                        </a>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p>Столы не найдены</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+    <title>Заказы</title>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <div class="container">
+
+        <hr>
+
+        <h2>Общая выручка от оплаченных заказов: {{ total_revenue }} руб.</h2>
+
+        <hr>
+
+        <h2>Поиск заказов</h2>
+        <form method="get" action="{% url 'core:orders' %}">
+            <label for="search_table_number">Номер стола:</label>
+            <input type="text" name="search_table_number" id="search_table_number">
+            <label for="search_status">Статус:</label>
+            <select name="search_status" id="search_status">
+                <option value="">-- Выберите статус --</option>
+                <option value="в ожидании">В ожидании</option>
+                <option value="готово">Готово</option>
+                <option value="оплачено">Оплачено</option>
+            </select>
+            <button type="submit" name="search_order">Поиск</button>
+        </form>
+
+        <hr>
+
+        <h2>Все заказы</h2>
+        <div class="orders-container">
+            {% for order in orders %}
+                <div class="order-box">
+                    <a href="{% url 'core:order_detail' pk=order.id %}">
+                        Заказ № {{ order.id }} | Стол № {{ order.table.number }} | Сумма: {{ order.total_price }} | Статус: {{ order.status }}
+                    </a>
+                </div>
+            {% empty %}
+                <p>Заказы не найдены.</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

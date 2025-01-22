@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование заказа</title>
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+    <h1>Редактирование заказа №{{ order.id }}</h1>
+    <form method="post" action="">
+        {% csrf_token %}
+
+        <label for="table">Стол:</label>
+        <select id="table" name="table">
+            {% for table in tables %}
+                <option value="{{ table.id }}" {% if table.id == order.table.id %}selected{% endif %}>
+                    Стол №{{ table.number }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <hr>
+
+        <div class="checkbox-container">
+            <label>Позиции:</label>
+            {% for item in items %}
+                <div class="checkbox-item">
+                    <input
+                        type="checkbox"
+                        id="item_{{ item.id }}"
+                        name="items"
+                        value="{{ item.id }}"
+                        {% if item in order.items.all %}checked{% endif %}
+                    >
+                    <label for="item_{{ item.id }}">{{ item.name }} ({{ item.price }} руб.)</label>
+                </div>
+            {% endfor %}
+        </div>
+
+        <hr>
+
+        <label for="status">Статус:</label>
+        <select id="status" name="status">
+            {% for status_value, status_label in status_choices %}
+                <option value="{{ status_value }}" {% if order.status == status_value %}selected{% endif %}>
+                    {{ status_label }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Сохранить</button>
+    </form>
+
+    <hr>
+
+    <form method="post" action="" onsubmit="return confirm('Вы уверены, что хотите удалить этот заказ?');">
+        {% csrf_token %}
+        <button type="submit" name="delete_order" class="delete-button">Удалить заказ</button>
+    </form>
+</body>
+</html>

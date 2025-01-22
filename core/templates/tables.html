@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+    <title>Столы</title>
+</head>
+<body>
+    {% include 'navbar.html' %}
+
+        <hr>
+
+
+            <h2>Добавить стол</h2>
+            <form method="post" action="{% url 'core:tables' %}">
+                {% csrf_token %}
+                <label for="number">Номер стола:</label>
+                <input type="text" name="number" id="number" required>
+                <button type="submit" name="add_table">Добавить стол</button>
+            </form>
+            </div>
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                    <div class="message {{ message.tags }}">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+        <hr>
+
+
+    <div class="container">
+        <h2>Список столов</h2>
+
+        <div class="tables-container">
+            {% for table in tables %}
+                <div class="table-box">
+                    <h3>Стол № {{ table.number }}</h3>
+                    <form method="post" action="{% url 'core:tables' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="table_id" value="{{ table.id }}">
+                        <button type="submit" name="delete_table">Удалить</button>
+                    </form>
+                </div>
+            {% empty %}
+                <p>Столов нет.</p>
+            {% endfor %}
+        </div>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{% load static %}
+<header class="header">
+    <div class="container">
+        <nav class="header__nav">
+            <ul class="header__menu">
+                <li class="header__menuItem"><a href="{% url 'core:index' %}">Главная</a></li>
+                <li class="header__menuItem"><a href="{% url 'core:orders' %}">Заказы</a></li>
+                <li class="header__menuItem"><a href="{% url 'core:items' %}">Позиции</a></li>
+                <li class="header__menuItem"><a href="{% url 'core:tables' %}">Столы</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
