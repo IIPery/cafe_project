@@ -36,7 +36,7 @@
         <div class="orders-container">
             {% for order in orders %}
                 <div class="order-box">
-                    <a href="{% url 'core:order_detail' pk=order.id %}">
+                    <a href="{% url 'core:orders_detail' pk=order.id %}">
                         Заказ № {{ order.id }} | Стол № {{ order.table.number }} | Сумма: {{ order.total_price }} | Статус: {{ order.status }}
                     </a>
                 </div>

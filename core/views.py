@@ -1,3 +1,7 @@
+from typing import Dict
+
+from django.db.models import QuerySet
+from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView, TemplateView, DetailView, CreateView
 from django.contrib import messages
@@ -11,7 +15,7 @@ from core import consts
 class Index(TemplateView):
     template_name = 'index.html'
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> Dict:
         context = super().get_context_data(**kwargs)
         tables = models.Table.objects.all()
 
@@ -30,10 +34,9 @@ class Table(ListView):
     template_name = 'tables.html'
     context_object_name = 'tables'
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs) -> HttpResponse:
         if 'add_table' in request.POST:
-            number = request.POST.get('number')
-            if number:
+            if number := request.POST.get('number'):
                 models.Table.objects.create(number=number)
                 messages.success(request, f'Стол № {number} успешно добавлен!')
             else:
@@ -56,14 +59,14 @@ class Item(ListView):
     template_name = 'items.html'
     context_object_name = 'items'
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs) -> HttpResponse:
         if 'add_item' in request.POST:
             name = request.POST.get('name')
             price = request.POST.get('price')
 
             if name and price:
                 try:
-                    price = float(price)
+                    price = int(price)
                     models.Item.objects.create(name=name, price=price)
                 except ValueError:
                     pass
@@ -83,8 +86,8 @@ class Item(ListView):
                 if name:
                     item.name = name
                 if price:
-                    item.price = float(price)
-                item.save()
+                    item.price = int(price)
+                item.save(update_fields=['name', 'price'])
             except ValueError:
                 pass
 
@@ -97,7 +100,7 @@ class Order(ListView):
     context_object_name = 'orders'
     ordering = ['-id']
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[models.Order]:
         queryset = super().get_queryset()
 
         search_table_number = self.request.GET.get('search_table_number', '')
@@ -110,7 +113,7 @@ class Order(ListView):
 
         return queryset
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> Dict:
         context = super().get_context_data(**kwargs)
 
         total_revenue = sum(order.total_price for order in context['orders'] if order.status == 'оплачено')
@@ -124,14 +127,14 @@ class OrderDetail(DetailView):
     template_name = 'order_detail.html'
     context_object_name = 'order'
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> Dict:
         context = super().get_context_data(**kwargs)
         context['tables'] = models.Table.objects.all()
         context['items'] = models.Item.objects.all()
-        context['status_choices'] = self.model._meta.get_field('status').choices
+        context['status_choices'] = consts.STATUS_CHOICES
         return context
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs) -> HttpResponse:
         order = self.get_object()
 
         if 'delete_order' in request.POST:
@@ -150,27 +153,27 @@ class OrderDetail(DetailView):
         else:
             order.items.clear()
 
-        if status in dict(self.model._meta.get_field('status').choices):
+        if status in dict(consts.STATUS_CHOICES):
             order.status = status
 
-        order.save()
-        return redirect('core:orders', pk=order.id)
+        order.save(update_fields=['table_id', 'status'])
+        return redirect('core:orders')
 
 
 class OrderCreate(CreateView):
     model = models.Order
     template_name = 'order_create.html'
     fields = ['table', 'status', 'items']
-    success_url = reverse_lazy('core:orders')
+    success_url = reverse_lazy('core:index')
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> Dict:
         context = super().get_context_data(**kwargs)
         context['tables'] = models.Table.objects.all()
         context['items'] = models.Item.objects.all()
-        context['status_choices'] = self.model._meta.get_field('status').choices
+        context['status_choices'] = consts.STATUS_CHOICES
 
         table_id = self.request.GET.get('table_id')
         if table_id:
-            context['form'].fields['table'].initial = models.Table.objects.get(id=table_id)
+            context['form'].fields['table'].initial = get_object_or_404(models.Table, id=table_id)
 
         return context

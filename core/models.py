@@ -4,7 +4,7 @@ from core import consts
 
 
 class Table(models.Model):
-    number = models.CharField('номер стола', max_length=255, db_index=True )
+    number = models.CharField('номер стола', max_length=255, db_index=True)
 
     class Meta:
         verbose_name = 'стол'

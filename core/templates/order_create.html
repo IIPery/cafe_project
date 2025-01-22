@@ -10,7 +10,7 @@
     <div class="container">
         <h2>Создание заказа</h2>
 
-        <form method="post" action="{% url 'core:order_create' %}">
+        <form method="post" action="{% url 'core:orders_create' %}">
             {% csrf_token %}
 
             <label for="table">Стол:</label>

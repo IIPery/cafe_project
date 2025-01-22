@@ -23,14 +23,14 @@
                         <ul>
                             {% for order in table.orders %}
                                 <li>
-                                    <a href="{% url 'core:order_detail' pk=order.id %}">
+                                    <a href="{% url 'core:orders_detail' pk=order.id %}">
                                         Заказ № {{ order.id }} - {{ order.status }}
                                     </a>
                                 </li>
                             {% endfor %}
                         </ul>
                     {% else %}
-                        <a href="{% url 'core:order_create' %}?table_id={{ table.id }}">
+                        <a href="{% url 'core:orders_create' %}?table_id={{ table.id }}">
                             <button>Добавить заказ</button>
                         </a>
                     {% endif %}
