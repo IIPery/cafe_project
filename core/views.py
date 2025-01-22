@@ -8,8 +8,7 @@ from django.contrib import messages
 from django.shortcuts import redirect, get_object_or_404
 
 
-from core import models
-from core import consts
+from core import models, consts, forms
 
 
 class Index(TemplateView):
@@ -36,11 +35,12 @@ class Table(ListView):
 
     def post(self, request, *args, **kwargs) -> HttpResponse:
         if 'add_table' in request.POST:
-            if number := request.POST.get('number'):
-                models.Table.objects.create(number=number)
-                messages.success(request, f'Стол № {number} успешно добавлен!')
+            form = forms.TableForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f'Стол № {form.cleaned_data["number"]} успешно добавлен!')
             else:
-                messages.error(request, 'Номер стола не может быть пустым!')
+                messages.error(request, 'Ошибка при добавлении стола!')
 
         elif 'delete_table' in request.POST:
             table_id = request.POST.get('table_id')
@@ -61,15 +61,13 @@ class Item(ListView):
 
     def post(self, request, *args, **kwargs) -> HttpResponse:
         if 'add_item' in request.POST:
-            name = request.POST.get('name')
-            price = request.POST.get('price')
+            form = forms.ItemForm(request.POST)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f'Позиция "{form.cleaned_data["name"]}" успешно добавлена!')
+            else:
+                messages.error(request, 'Ошибка при добавлении позиции!')
 
-            if name and price:
-                try:
-                    price = int(price)
-                    models.Item.objects.create(name=name, price=price)
-                except ValueError:
-                    pass
 
         elif 'delete_item' in request.POST:
             item_id = request.POST.get('item_id')
@@ -78,18 +76,12 @@ class Item(ListView):
 
         elif 'edit_item' in request.POST:
             item_id = request.POST.get('item_id')
-            name = request.POST.get('name')
-            price = request.POST.get('price')
-
-            try:
-                item = get_object_or_404(models.Item, id=item_id)
-                if name:
-                    item.name = name
-                if price:
-                    item.price = int(price)
-                item.save(update_fields=['name', 'price'])
-            except ValueError:
-                pass
+            form = forms.ItemForm(request.POST, instance=item)
+            if form.is_valid():
+                form.save()
+                messages.success(request, f'Позиция "{form.cleaned_data["name"]}" успешно обновлена!')
+            else:
+                messages.error(request, 'Ошибка при обновлении позиции!')
 
         return redirect('core:items')
 
@@ -141,29 +133,21 @@ class OrderDetail(DetailView):
             order.delete()
             return redirect('core:orders')
 
-        table_id = request.POST.get('table')
-        items_ids = request.POST.getlist('items')
-        status = request.POST.get('status')
+        form = forms.OrderForm(request.POST, instance=order)
 
-        if table_id:
-            order.table_id = table_id
-
-        if items_ids:
-            order.items.set(items_ids)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Заказ успешно обновлен!')
+            return redirect('core:orders')
         else:
-            order.items.clear()
-
-        if status in dict(consts.STATUS_CHOICES):
-            order.status = status
-
-        order.save(update_fields=['table_id', 'status'])
-        return redirect('core:orders')
+            messages.error(request, 'Ошибка при обновлении заказа!')
+            return self.render_to_response({'form': form})
 
 
 class OrderCreate(CreateView):
     model = models.Order
     template_name = 'order_create.html'
-    fields = ['table', 'status', 'items']
+    form_class = forms.OrderForm
     success_url = reverse_lazy('core:index')
 
     def get_context_data(self, **kwargs) -> Dict:
