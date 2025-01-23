@@ -35,7 +35,7 @@ class Table(ListView):
 
     def post(self, request, *args, **kwargs) -> HttpResponse:
         if 'add_table' in request.POST:
-            form = forms.TableForm(request.POST)
+            form = forms.Table(request.POST)
             if form.is_valid():
                 form.save()
                 messages.success(request, f'Стол № {form.cleaned_data["number"]} успешно добавлен!')
@@ -61,7 +61,7 @@ class Item(ListView):
 
     def post(self, request, *args, **kwargs) -> HttpResponse:
         if 'add_item' in request.POST:
-            form = forms.ItemForm(request.POST)
+            form = forms.Item(request.POST)
             if form.is_valid():
                 form.save()
                 messages.success(request, f'Позиция "{form.cleaned_data["name"]}" успешно добавлена!')
@@ -75,8 +75,7 @@ class Item(ListView):
             item.delete()
 
         elif 'edit_item' in request.POST:
-            item_id = request.POST.get('item_id')
-            form = forms.ItemForm(request.POST, instance=item)
+            form = forms.Item(request.POST, instance=item)
             if form.is_valid():
                 form.save()
                 messages.success(request, f'Позиция "{form.cleaned_data["name"]}" успешно обновлена!')
@@ -133,7 +132,7 @@ class OrderDetail(DetailView):
             order.delete()
             return redirect('core:orders')
 
-        form = forms.OrderForm(request.POST, instance=order)
+        form = forms.Order(request.POST, instance=order)
 
         if form.is_valid():
             form.save()
@@ -147,7 +146,7 @@ class OrderDetail(DetailView):
 class OrderCreate(CreateView):
     model = models.Order
     template_name = 'order_create.html'
-    form_class = forms.OrderForm
+    form_class = forms.Order
     success_url = reverse_lazy('core:index')
 
     def get_context_data(self, **kwargs) -> Dict:

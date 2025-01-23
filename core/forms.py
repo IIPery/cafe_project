@@ -3,7 +3,7 @@ from django import forms
 from core import models, consts
 
 
-class OrderForm(forms.ModelForm):
+class Order(forms.ModelForm):
     class Meta:
         model = models.Order
         fields = ['table', 'status', 'items']
@@ -13,13 +13,13 @@ class OrderForm(forms.ModelForm):
     status = forms.ChoiceField(choices=consts.STATUS_CHOICES, required=True)
 
 
-class TableForm(forms.ModelForm):
+class Table(forms.ModelForm):
     class Meta:
         model = models.Table
         fields = ['number']
 
 
-class ItemForm(forms.ModelForm):
+class Item(forms.ModelForm):
     class Meta:
         model = models.Item
         fields = ['name', 'price']

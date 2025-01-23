@@ -24,6 +24,7 @@ INSTALLED_APPS = [
 
     'core.apps.OrdersConfig',
     'api.apps.ApiConfig',
+    'tests'
 
 ]
 
