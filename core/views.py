@@ -75,6 +75,8 @@ class Item(ListView):
             item.delete()
 
         elif 'edit_item' in request.POST:
+            item_id = request.POST.get('item_id')
+            item = get_object_or_404(models.Item, id=item_id)
             form = forms.Item(request.POST, instance=item)
             if form.is_valid():
                 form.save()
@@ -136,10 +138,8 @@ class OrderDetail(DetailView):
 
         if form.is_valid():
             form.save()
-            messages.success(request, 'Заказ успешно обновлен!')
             return redirect('core:orders')
         else:
-            messages.error(request, 'Ошибка при обновлении заказа!')
             return self.render_to_response({'form': form})
 
 
